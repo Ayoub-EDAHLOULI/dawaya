@@ -1,0 +1,13 @@
+{
+  "translation": {
+    "home": {
+      "title": "Today's Medication",
+      "empty": "No medications scheduled for today."
+    },
+    "actions": {
+      "taken": "Taken",
+      "skipped": "Skipped",
+      "snooze": "Snooze"
+    }
+  }
+}

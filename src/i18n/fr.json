@@ -1,0 +1,13 @@
+{
+  "translation": {
+    "home": {
+      "title": "Médicaments d'aujourd'hui",
+      "empty": "Aucun médicament prévu aujourd'hui."
+    },
+    "actions": {
+      "taken": "Pris",
+      "skipped": "Ignoré",
+      "snooze": "Plus tard"
+    }
+  }
+}

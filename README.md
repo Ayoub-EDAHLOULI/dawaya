@@ -1,4 +1,4 @@
-# MedRemind
+# Dawaya
 
 A multilingual, offline-first medication reminder and adherence tracker built for elderly users, chronically-ill patients, and the family members who help manage their care.
 
@@ -6,7 +6,7 @@ A multilingual, offline-first medication reminder and adherence tracker built fo
 
 Most medication reminder apps are English-only, text-heavy, and assume the person using them is comfortable navigating a modern app UI. That excludes a huge population: elderly people, low-literacy users, and anyone whose daily language is spoken — like Moroccan Darija — rather than a language with strong app-store support.
 
-MedRemind is built around three ideas:
+Dawaya is built around three ideas:
 
 - **Darija, French, and English**, switchable at runtime — not bolted on as an afterthought.
 - **Icons, color, and audio before text.** The patient-facing flow is designed so someone can use it without reading fluently in any language.
@@ -44,7 +44,7 @@ MedRemind is built around three ideas:
 
 ### A note on voice prompts
 
-There's no offline, on-device text-to-speech engine for Darija on iOS or Android. Rather than depend on a cloud TTS API — which would break the offline-first requirement — MedRemind uses **pre-recorded audio clips** for the fixed set of reminder phrases, and lets caregivers **record their own voice** saying the medication name during setup. This keeps everything working with no internet connection, and arguably feels more human anyway.
+There's no offline, on-device text-to-speech engine for Darija on iOS or Android. Rather than depend on a cloud TTS API — which would break the offline-first requirement — Dawaya uses **pre-recorded audio clips** for the fixed set of reminder phrases, and lets caregivers **record their own voice** saying the medication name during setup. This keeps everything working with no internet connection, and arguably feels more human anyway.
 
 ### A note on Android notification reliability
 

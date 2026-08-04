@@ -1,0 +1,13 @@
+{
+  "translation": {
+    "home": {
+      "title": "Dwa dyal lyoum",
+      "empty": "Makayn tachi dwa lyoum."
+    },
+    "actions": {
+      "taken": "Khditou",
+      "skipped": "Makhditouch",
+      "snooze": "Men be3d"
+    }
+  }
+}
