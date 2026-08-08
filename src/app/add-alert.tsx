@@ -10,8 +10,9 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { colors, radii, spacing } from "../constants/theme";
 import { DatePickerSheet } from "../components/DatePickerSheet";
+import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
+import { colors, radii, spacing } from "../constants/theme";
 
 const MONTH_LABELS = [
   "Jan",
@@ -32,10 +33,18 @@ function formatDate(date: Date) {
   return `${date.getDate()} ${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`;
 }
 
+function formatTime(value: TimeValue) {
+  return `${value.hour.toString().padStart(2, "0")}:${value.minute
+    .toString()
+    .padStart(2, "0")} ${value.meridiem}`;
+}
+
 export default function AddAlertScreen() {
   const router = useRouter();
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+  const [doseTime, setDoseTime] = useState<TimeValue | null>(null);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -145,7 +154,10 @@ export default function AddAlertScreen() {
             </View>
           </Pressable>
 
-          <Pressable style={[styles.pickerField, styles.rowItem]}>
+          <Pressable
+            style={[styles.pickerField, styles.rowItem]}
+            onPress={() => setTimePickerVisible(true)}
+          >
             <View style={styles.pickerFieldHeader}>
               <Text style={styles.pickerLabel}>Time</Text>
               <Ionicons
@@ -160,7 +172,11 @@ export default function AddAlertScreen() {
                 size={16}
                 color={colors.textMuted}
               />
-              <Text style={styles.pickerPlaceholder}>Select time</Text>
+              <Text
+                style={doseTime ? styles.pickerValue : styles.pickerPlaceholder}
+              >
+                {doseTime ? formatTime(doseTime) : "Select time"}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -192,6 +208,13 @@ export default function AddAlertScreen() {
         initialDate={startDate ?? undefined}
         onClose={() => setDatePickerVisible(false)}
         onSave={setStartDate}
+      />
+
+      <TimePickerSheet
+        visible={isTimePickerVisible}
+        initialValue={doseTime ?? undefined}
+        onClose={() => setTimePickerVisible(false)}
+        onSave={setDoseTime}
       />
     </SafeAreaView>
   );
