@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -21,10 +22,7 @@ import {
 } from "../components/FrequencyPickerSheet";
 import { MealTiming, MealTimingSwitch } from "../components/MealTimingSwitch";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
-import {
-  UploadImageOption,
-  UploadImageSheet,
-} from "../components/UploadImageSheet";
+import { UploadImageSheet } from "../components/UploadImageSheet";
 import { colors, radii, spacing } from "../constants/theme";
 
 const MONTH_LABELS = [
@@ -93,9 +91,7 @@ export default function AddAlertScreen() {
   const [isFrequencyPickerVisible, setFrequencyPickerVisible] = useState(false);
   const [frequency, setFrequency] = useState<FrequencyValue | null>(null);
   const [isUploadSheetVisible, setUploadSheetVisible] = useState(false);
-  const [imageSource, setImageSource] = useState<UploadImageOption | null>(
-    null,
-  );
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [doses, setDoses] = useState<DoseEntry[]>([createDoseEntry()]);
   const [activeDoseId, setActiveDoseId] = useState<string | null>(null);
@@ -196,29 +192,34 @@ export default function AddAlertScreen() {
           <Text style={styles.errorText}>{errors.medicineName}</Text>
         )}
 
-        <Pressable
-          style={styles.uploadBox}
-          onPress={() => setUploadSheetVisible(true)}
-        >
-          <Ionicons
-            name={imageSource ? "checkmark-circle" : "image-outline"}
-            size={28}
-            color={imageSource ? colors.primary : colors.textMuted}
-          />
-          {imageSource ? (
+        {imageUri ? (
+          <View style={styles.imagePreviewWrap}>
+            <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+            <Pressable
+              style={styles.imageRemoveButton}
+              onPress={() => setImageUri(null)}
+              hitSlop={8}
+            >
+              <Ionicons name="close" size={16} color="#ffffff" />
+            </Pressable>
+          </View>
+        ) : (
+          <Pressable
+            style={styles.uploadBox}
+            onPress={() => setUploadSheetVisible(true)}
+          >
+            <Ionicons
+              name="image-outline"
+              size={28}
+              color={colors.textMuted}
+            />
             <Text style={styles.uploadText}>
-              {imageSource === "camera"
-                ? "Photo ready to capture"
-                : "Image selected from device"}
+              <Text style={styles.uploadTextLink}>Take a photo</Text> or
+              upload from device
             </Text>
-          ) : (
-            <Text style={styles.uploadText}>
-              <Text style={styles.uploadTextLink}>Take a photo</Text> or upload
-              from device
-            </Text>
-          )}
-          <Text style={styles.uploadHint}>JPG, JPEG, PNG less than 1MB</Text>
-        </Pressable>
+            <Text style={styles.uploadHint}>JPG, JPEG, PNG less than 1MB</Text>
+          </Pressable>
+        )}
 
         {/* Schedule */}
         <Text style={styles.sectionLabel}>Schedule</Text>
@@ -492,7 +493,7 @@ export default function AddAlertScreen() {
       <UploadImageSheet
         visible={isUploadSheetVisible}
         onClose={() => setUploadSheetVisible(false)}
-        onSelect={setImageSource}
+        onPicked={setImageUri}
       />
     </SafeAreaView>
   );
@@ -570,6 +571,28 @@ const styles = StyleSheet.create({
   uploadHint: {
     fontSize: 12,
     color: colors.textMuted,
+  },
+  imagePreviewWrap: {
+    alignSelf: "flex-start",
+  },
+  imagePreview: {
+    width: 96,
+    height: 96,
+    borderRadius: radii.md,
+    backgroundColor: colors.background,
+  },
+  imageRemoveButton: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    width: 24,
+    height: 24,
+    borderRadius: radii.pill,
+    backgroundColor: colors.danger,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: colors.surface,
   },
   row: {
     flexDirection: "row",

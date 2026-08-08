@@ -1,34 +1,84 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
-
-export type UploadImageOption = "camera" | "device";
 
 type UploadImageSheetProps = {
   visible: boolean;
   onClose: () => void;
-  onSelect: (option: UploadImageOption) => void;
+  onPicked: (uri: string) => void;
 };
 
+const IMAGE_PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
+  mediaTypes: ["images"],
+  allowsEditing: true,
+  aspect: [1, 1],
+  quality: 0.7,
+};
+
+async function pickFromCamera(): Promise<string | null> {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) {
+    Alert.alert(
+      "Camera access needed",
+      "Enable camera access in your device settings to take a photo of the medication.",
+    );
+    return null;
+  }
+
+  const result = await ImagePicker.launchCameraAsync(IMAGE_PICKER_OPTIONS);
+  if (result.canceled || !result.assets?.[0]) return null;
+  return result.assets[0].uri;
+}
+
+async function pickFromLibrary(): Promise<string | null> {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!permission.granted) {
+    Alert.alert(
+      "Photo access needed",
+      "Enable photo library access in your device settings to attach a picture of the medication.",
+    );
+    return null;
+  }
+
+  const result =
+    await ImagePicker.launchImageLibraryAsync(IMAGE_PICKER_OPTIONS);
+  if (result.canceled || !result.assets?.[0]) return null;
+  return result.assets[0].uri;
+}
+
 const OPTIONS: {
-  key: UploadImageOption;
+  key: "camera" | "device";
   label: string;
   icon: keyof typeof Ionicons.glyphMap;
+  pick: () => Promise<string | null>;
 }[] = [
-  { key: "camera", label: "Take a photo", icon: "camera-outline" },
-  { key: "device", label: "Upload from device", icon: "cloud-upload-outline" },
+  {
+    key: "camera",
+    label: "Take a photo",
+    icon: "camera-outline",
+    pick: pickFromCamera,
+  },
+  {
+    key: "device",
+    label: "Upload from device",
+    icon: "cloud-upload-outline",
+    pick: pickFromLibrary,
+  },
 ];
 
 export function UploadImageSheet({
   visible,
   onClose,
-  onSelect,
+  onPicked,
 }: UploadImageSheetProps) {
   const insets = useSafeAreaInsets();
-  const handleSelect = (option: UploadImageOption) => {
-    onSelect(option);
+
+  const handleSelect = async (option: (typeof OPTIONS)[number]) => {
     onClose();
+    const uri = await option.pick();
+    if (uri) onPicked(uri);
   };
 
   return (
@@ -38,10 +88,19 @@ export function UploadImageSheet({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <View style={styles.backdrop}>
         <Pressable
-          style={[styles.sheet, { paddingBottom: spacing.xl + insets.bottom }]}
-          onPress={(e) => e.stopPropagation()}
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
+
+        <View
+          style={[
+            styles.sheet,
+            { paddingBottom: spacing.xl + insets.bottom },
+          ]}
         >
           <View style={styles.grabHandle} />
 
@@ -62,15 +121,15 @@ export function UploadImageSheet({
                   styles.optionRow,
                   i < OPTIONS.length - 1 && styles.optionRowDivider,
                 ]}
-                onPress={() => handleSelect(option.key)}
+                onPress={() => handleSelect(option)}
               >
                 <Ionicons name={option.icon} size={22} color={colors.primary} />
                 <Text style={styles.optionLabel}>{option.label}</Text>
               </Pressable>
             ))}
           </View>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 }
