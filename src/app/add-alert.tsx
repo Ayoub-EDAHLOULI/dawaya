@@ -19,6 +19,7 @@ import {
   FrequencyPickerSheet,
   FrequencyValue,
 } from "../components/FrequencyPickerSheet";
+import { MealTiming, MealTimingSwitch } from "../components/MealTimingSwitch";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
 import {
   UploadImageOption,
@@ -74,6 +75,7 @@ export default function AddAlertScreen() {
   const [imageSource, setImageSource] = useState<UploadImageOption | null>(
     null,
   );
+  const [mealTiming, setMealTiming] = useState<MealTiming>("after");
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -241,13 +243,8 @@ export default function AddAlertScreen() {
           </Pressable>
         </View>
 
-        <View style={styles.pillRow}>
-          <Pressable style={styles.pill}>
-            <Text style={styles.pillText}>Before Meal</Text>
-          </Pressable>
-          <Pressable style={[styles.pill, styles.pillSelected]}>
-            <Text style={styles.pillTextSelected}>After Meal</Text>
-          </Pressable>
+        <View style={styles.mealTimingRow}>
+          <MealTimingSwitch value={mealTiming} onChange={setMealTiming} />
         </View>
 
         <Pressable style={styles.addDosageRow}>
@@ -398,29 +395,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: colors.textPrimary,
   },
-  pillRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
+  mealTimingRow: {
     marginTop: spacing.md,
-  },
-  pill: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: radii.pill,
-    backgroundColor: colors.background,
-  },
-  pillSelected: {
-    backgroundColor: colors.primary,
-  },
-  pillText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: colors.textSecondary,
-  },
-  pillTextSelected: {
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#ffffff",
   },
   addDosageRow: {
     flexDirection: "row",
