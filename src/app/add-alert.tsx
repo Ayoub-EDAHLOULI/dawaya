@@ -11,6 +11,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DatePickerSheet } from "../components/DatePickerSheet";
+import {
+  DosagePickerSheet,
+  DosageValue,
+} from "../components/DosagePickerSheet";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
 import { colors, radii, spacing } from "../constants/theme";
 
@@ -39,12 +43,18 @@ function formatTime(value: TimeValue) {
     .padStart(2, "0")} ${value.meridiem}`;
 }
 
+function formatDosage(value: DosageValue) {
+  return `${value.amount} ${value.unit}`;
+}
+
 export default function AddAlertScreen() {
   const router = useRouter();
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
   const [doseTime, setDoseTime] = useState<TimeValue | null>(null);
+  const [isDosagePickerVisible, setDosagePickerVisible] = useState(false);
+  const [dosage, setDosage] = useState<DosageValue | null>(null);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -135,7 +145,10 @@ export default function AddAlertScreen() {
         <Text style={styles.sectionLabel}>Dose</Text>
 
         <View style={styles.row}>
-          <Pressable style={[styles.pickerField, styles.rowItem]}>
+          <Pressable
+            style={[styles.pickerField, styles.rowItem]}
+            onPress={() => setDosagePickerVisible(true)}
+          >
             <View style={styles.pickerFieldHeader}>
               <Text style={styles.pickerLabel}>Dose amount</Text>
               <Ionicons
@@ -150,7 +163,11 @@ export default function AddAlertScreen() {
                 size={16}
                 color={colors.textMuted}
               />
-              <Text style={styles.pickerPlaceholder}>Select dosage</Text>
+              <Text
+                style={dosage ? styles.pickerValue : styles.pickerPlaceholder}
+              >
+                {dosage ? formatDosage(dosage) : "Select dosage"}
+              </Text>
             </View>
           </Pressable>
 
@@ -215,6 +232,13 @@ export default function AddAlertScreen() {
         initialValue={doseTime ?? undefined}
         onClose={() => setTimePickerVisible(false)}
         onSave={setDoseTime}
+      />
+
+      <DosagePickerSheet
+        visible={isDosagePickerVisible}
+        initialValue={dosage ?? undefined}
+        onClose={() => setDosagePickerVisible(false)}
+        onSave={setDosage}
       />
     </SafeAreaView>
   );
