@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 import {
   Pressable,
   ScrollView,
@@ -10,9 +11,31 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
+import { DatePickerSheet } from "../components/DatePickerSheet";
+
+const MONTH_LABELS = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+
+function formatDate(date: Date) {
+  return `${date.getDate()} ${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`;
+}
 
 export default function AddAlertScreen() {
   const router = useRouter();
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [startDate, setStartDate] = useState<Date | null>(null);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -51,7 +74,10 @@ export default function AddAlertScreen() {
         <Text style={styles.sectionLabel}>Schedule</Text>
 
         <View style={styles.row}>
-          <Pressable style={[styles.pickerField, styles.rowItem]}>
+          <Pressable
+            style={[styles.pickerField, styles.rowItem]}
+            onPress={() => setDatePickerVisible(true)}
+          >
             <View style={styles.pickerFieldHeader}>
               <Text style={styles.pickerLabel}>Start date</Text>
               <Ionicons
@@ -66,7 +92,13 @@ export default function AddAlertScreen() {
                 size={16}
                 color={colors.textMuted}
               />
-              <Text style={styles.pickerPlaceholder}>Select date</Text>
+              <Text
+                style={
+                  startDate ? styles.pickerValue : styles.pickerPlaceholder
+                }
+              >
+                {startDate ? formatDate(startDate) : "Select date"}
+              </Text>
             </View>
           </Pressable>
 
@@ -154,6 +186,13 @@ export default function AddAlertScreen() {
           <Text style={styles.ctaText}>Create Reminder</Text>
         </Pressable>
       </View>
+
+      <DatePickerSheet
+        visible={isDatePickerVisible}
+        initialDate={startDate ?? undefined}
+        onClose={() => setDatePickerVisible(false)}
+        onSave={setStartDate}
+      />
     </SafeAreaView>
   );
 }
@@ -250,6 +289,11 @@ const styles = StyleSheet.create({
   pickerPlaceholder: {
     fontSize: 13,
     color: colors.textMuted,
+  },
+  pickerValue: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.textPrimary,
   },
   pillRow: {
     flexDirection: "row",
