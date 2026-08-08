@@ -78,8 +78,16 @@ function createDoseEntry(): DoseEntry {
   };
 }
 
+type FormErrors = {
+  medicineName?: string;
+  startDate?: string;
+  frequency?: string;
+  doses?: Record<string, { dosage?: string; time?: string }>;
+};
+
 export default function AddAlertScreen() {
   const router = useRouter();
+  const [medicineName, setMedicineName] = useState("");
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [isFrequencyPickerVisible, setFrequencyPickerVisible] = useState(false);
@@ -94,6 +102,8 @@ export default function AddAlertScreen() {
   const [isDosagePickerVisible, setDosagePickerVisible] = useState(false);
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
+  const [errors, setErrors] = useState<FormErrors>({});
+
   const activeDose = doses.find((d) => d.id === activeDoseId) ?? null;
 
   const updateDose = (id: string, patch: Partial<DoseEntry>) => {
@@ -102,8 +112,55 @@ export default function AddAlertScreen() {
 
   const addDose = () => setDoses((prev) => [...prev, createDoseEntry()]);
 
-  const removeDose = (id: string) =>
+  const removeDose = (id: string) => {
     setDoses((prev) => prev.filter((d) => d.id !== id));
+    setErrors((prev) => {
+      if (!prev.doses) return prev;
+      const { [id]: _removed, ...rest } = prev.doses;
+      return { ...prev, doses: rest };
+    });
+  };
+
+  const validate = (): boolean => {
+    const nextErrors: FormErrors = {};
+
+    if (!medicineName.trim()) {
+      nextErrors.medicineName = "Medicine name is required";
+    }
+    if (!startDate) {
+      nextErrors.startDate = "Start date is required";
+    }
+    if (!frequency) {
+      nextErrors.frequency = "Frequency is required";
+    }
+
+    const doseErrors: Record<string, { dosage?: string; time?: string }> = {};
+    for (const dose of doses) {
+      const entryErrors: { dosage?: string; time?: string } = {};
+      if (!dose.dosage) entryErrors.dosage = "Dose amount is required";
+      if (!dose.time) entryErrors.time = "Time is required";
+      if (entryErrors.dosage || entryErrors.time) {
+        doseErrors[dose.id] = entryErrors;
+      }
+    }
+    if (Object.keys(doseErrors).length > 0) {
+      nextErrors.doses = doseErrors;
+    }
+
+    setErrors(nextErrors);
+    return (
+      !nextErrors.medicineName &&
+      !nextErrors.startDate &&
+      !nextErrors.frequency &&
+      !nextErrors.doses
+    );
+  };
+
+  const handleCreate = () => {
+    if (!validate()) return;
+    // TODO: wire up actual reminder creation once the database layer is back.
+    router.back();
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -124,10 +181,20 @@ export default function AddAlertScreen() {
         <Text style={styles.sectionLabel}>Medicine Info</Text>
 
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput, errors.medicineName && styles.fieldError]}
           placeholder="Enter medicine name"
           placeholderTextColor={colors.textMuted}
+          value={medicineName}
+          onChangeText={(text) => {
+            setMedicineName(text);
+            if (errors.medicineName) {
+              setErrors((prev) => ({ ...prev, medicineName: undefined }));
+            }
+          }}
         />
+        {errors.medicineName && (
+          <Text style={styles.errorText}>{errors.medicineName}</Text>
+        )}
 
         <Pressable
           style={styles.uploadBox}
@@ -157,61 +224,74 @@ export default function AddAlertScreen() {
         <Text style={styles.sectionLabel}>Schedule</Text>
 
         <View style={styles.row}>
-          <Pressable
-            style={[styles.pickerField, styles.rowItem]}
-            onPress={() => setDatePickerVisible(true)}
-          >
-            <View style={styles.pickerFieldHeader}>
-              <Text style={styles.pickerLabel}>Start date</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={colors.textMuted}
-              />
-            </View>
-            <View style={styles.pickerValueRow}>
-              <Ionicons
-                name="calendar-outline"
-                size={16}
-                color={colors.textMuted}
-              />
-              <Text
-                style={
-                  startDate ? styles.pickerValue : styles.pickerPlaceholder
-                }
-              >
-                {startDate ? formatDate(startDate) : "Select date"}
-              </Text>
-            </View>
-          </Pressable>
+          <View style={styles.rowItem}>
+            <Pressable
+              style={[styles.pickerField, errors.startDate && styles.fieldError]}
+              onPress={() => setDatePickerVisible(true)}
+            >
+              <View style={styles.pickerFieldHeader}>
+                <Text style={styles.pickerLabel}>Start date</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={16}
+                  color={colors.textMuted}
+                />
+              </View>
+              <View style={styles.pickerValueRow}>
+                <Ionicons
+                  name="calendar-outline"
+                  size={16}
+                  color={colors.textMuted}
+                />
+                <Text
+                  style={
+                    startDate ? styles.pickerValue : styles.pickerPlaceholder
+                  }
+                >
+                  {startDate ? formatDate(startDate) : "Select date"}
+                </Text>
+              </View>
+            </Pressable>
+            {errors.startDate && (
+              <Text style={styles.errorText}>{errors.startDate}</Text>
+            )}
+          </View>
 
-          <Pressable
-            style={[styles.pickerField, styles.rowItem]}
-            onPress={() => setFrequencyPickerVisible(true)}
-          >
-            <View style={styles.pickerFieldHeader}>
-              <Text style={styles.pickerLabel}>Frequency</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={colors.textMuted}
-              />
-            </View>
-            <View style={styles.pickerValueRow}>
-              <Ionicons
-                name="time-outline"
-                size={16}
-                color={colors.textMuted}
-              />
-              <Text
-                style={
-                  frequency ? styles.pickerValue : styles.pickerPlaceholder
-                }
-              >
-                {frequency ? formatFrequency(frequency) : "Select frequency"}
-              </Text>
-            </View>
-          </Pressable>
+          <View style={styles.rowItem}>
+            <Pressable
+              style={[
+                styles.pickerField,
+                errors.frequency && styles.fieldError,
+              ]}
+              onPress={() => setFrequencyPickerVisible(true)}
+            >
+              <View style={styles.pickerFieldHeader}>
+                <Text style={styles.pickerLabel}>Frequency</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={16}
+                  color={colors.textMuted}
+                />
+              </View>
+              <View style={styles.pickerValueRow}>
+                <Ionicons
+                  name="time-outline"
+                  size={16}
+                  color={colors.textMuted}
+                />
+                <Text
+                  style={
+                    frequency ? styles.pickerValue : styles.pickerPlaceholder
+                  }
+                >
+                  {frequency ? formatFrequency(frequency) : "Select frequency"}
+                </Text>
+              </View>
+            </Pressable>
+            {errors.frequency && (
+              <Text style={styles.errorText}>{errors.frequency}</Text>
+            )}
+          </View>
         </View>
 
         {/* Dose */}
@@ -227,69 +307,93 @@ export default function AddAlertScreen() {
             </View>
 
             <View style={styles.row}>
-              <Pressable
-                style={[styles.pickerField, styles.rowItem]}
-                onPress={() => {
-                  setActiveDoseId(dose.id);
-                  setDosagePickerVisible(true);
-                }}
-              >
-                <View style={styles.pickerFieldHeader}>
-                  <Text style={styles.pickerLabel}>Dose amount</Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                </View>
-                <View style={styles.pickerValueRow}>
-                  <Ionicons
-                    name="medical-outline"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                  <Text
-                    style={
-                      dose.dosage
-                        ? styles.pickerValue
-                        : styles.pickerPlaceholder
-                    }
-                  >
-                    {dose.dosage ? formatDosage(dose.dosage) : "Select dosage"}
+              <View style={styles.rowItem}>
+                <Pressable
+                  style={[
+                    styles.pickerField,
+                    errors.doses?.[dose.id]?.dosage && styles.fieldError,
+                  ]}
+                  onPress={() => {
+                    setActiveDoseId(dose.id);
+                    setDosagePickerVisible(true);
+                  }}
+                >
+                  <View style={styles.pickerFieldHeader}>
+                    <Text style={styles.pickerLabel}>Dose amount</Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={16}
+                      color={colors.textMuted}
+                    />
+                  </View>
+                  <View style={styles.pickerValueRow}>
+                    <Ionicons
+                      name="medical-outline"
+                      size={16}
+                      color={colors.textMuted}
+                    />
+                    <Text
+                      style={
+                        dose.dosage
+                          ? styles.pickerValue
+                          : styles.pickerPlaceholder
+                      }
+                    >
+                      {dose.dosage
+                        ? formatDosage(dose.dosage)
+                        : "Select dosage"}
+                    </Text>
+                  </View>
+                </Pressable>
+                {errors.doses?.[dose.id]?.dosage && (
+                  <Text style={styles.errorText}>
+                    {errors.doses[dose.id].dosage}
                   </Text>
-                </View>
-              </Pressable>
+                )}
+              </View>
 
-              <Pressable
-                style={[styles.pickerField, styles.rowItem]}
-                onPress={() => {
-                  setActiveDoseId(dose.id);
-                  setTimePickerVisible(true);
-                }}
-              >
-                <View style={styles.pickerFieldHeader}>
-                  <Text style={styles.pickerLabel}>Time</Text>
-                  <Ionicons
-                    name="chevron-forward"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                </View>
-                <View style={styles.pickerValueRow}>
-                  <Ionicons
-                    name="time-outline"
-                    size={16}
-                    color={colors.textMuted}
-                  />
-                  <Text
-                    style={
-                      dose.time ? styles.pickerValue : styles.pickerPlaceholder
-                    }
-                  >
-                    {dose.time ? formatTime(dose.time) : "Select time"}
+              <View style={styles.rowItem}>
+                <Pressable
+                  style={[
+                    styles.pickerField,
+                    errors.doses?.[dose.id]?.time && styles.fieldError,
+                  ]}
+                  onPress={() => {
+                    setActiveDoseId(dose.id);
+                    setTimePickerVisible(true);
+                  }}
+                >
+                  <View style={styles.pickerFieldHeader}>
+                    <Text style={styles.pickerLabel}>Time</Text>
+                    <Ionicons
+                      name="chevron-forward"
+                      size={16}
+                      color={colors.textMuted}
+                    />
+                  </View>
+                  <View style={styles.pickerValueRow}>
+                    <Ionicons
+                      name="time-outline"
+                      size={16}
+                      color={colors.textMuted}
+                    />
+                    <Text
+                      style={
+                        dose.time
+                          ? styles.pickerValue
+                          : styles.pickerPlaceholder
+                      }
+                    >
+                      {dose.time ? formatTime(dose.time) : "Select time"}
+                    </Text>
+                  </View>
+                </Pressable>
+                {errors.doses?.[dose.id]?.time && (
+                  <Text style={styles.errorText}>
+                    {errors.doses[dose.id].time}
                   </Text>
-                </View>
-              </Pressable>
+                )}
+              </View>
             </View>
 
             <View style={styles.mealTimingRow}>
@@ -309,7 +413,7 @@ export default function AddAlertScreen() {
 
       {/* CTA */}
       <View style={styles.footer}>
-        <Pressable style={styles.cta}>
+        <Pressable style={styles.cta} onPress={handleCreate}>
           <Text style={styles.ctaText}>Create Reminder</Text>
         </Pressable>
       </View>
@@ -318,7 +422,10 @@ export default function AddAlertScreen() {
         visible={isDatePickerVisible}
         initialDate={startDate ?? undefined}
         onClose={() => setDatePickerVisible(false)}
-        onSave={setStartDate}
+        onSave={(value) => {
+          setStartDate(value);
+          setErrors((prev) => ({ ...prev, startDate: undefined }));
+        }}
       />
 
       <TimePickerSheet
@@ -326,7 +433,22 @@ export default function AddAlertScreen() {
         initialValue={activeDose?.time ?? undefined}
         onClose={() => setTimePickerVisible(false)}
         onSave={(value) => {
-          if (activeDoseId) updateDose(activeDoseId, { time: value });
+          if (!activeDoseId) return;
+          updateDose(activeDoseId, { time: value });
+          setErrors((prev) =>
+            prev.doses?.[activeDoseId]
+              ? {
+                  ...prev,
+                  doses: {
+                    ...prev.doses,
+                    [activeDoseId]: {
+                      ...prev.doses[activeDoseId],
+                      time: undefined,
+                    },
+                  },
+                }
+              : prev,
+          );
         }}
       />
 
@@ -335,7 +457,22 @@ export default function AddAlertScreen() {
         initialValue={activeDose?.dosage ?? undefined}
         onClose={() => setDosagePickerVisible(false)}
         onSave={(value) => {
-          if (activeDoseId) updateDose(activeDoseId, { dosage: value });
+          if (!activeDoseId) return;
+          updateDose(activeDoseId, { dosage: value });
+          setErrors((prev) =>
+            prev.doses?.[activeDoseId]
+              ? {
+                  ...prev,
+                  doses: {
+                    ...prev.doses,
+                    [activeDoseId]: {
+                      ...prev.doses[activeDoseId],
+                      dosage: undefined,
+                    },
+                  },
+                }
+              : prev,
+          );
         }}
       />
 
@@ -343,7 +480,10 @@ export default function AddAlertScreen() {
         visible={isFrequencyPickerVisible}
         initialValue={frequency ?? undefined}
         onClose={() => setFrequencyPickerVisible(false)}
-        onSave={setFrequency}
+        onSave={(value) => {
+          setFrequency(value);
+          setErrors((prev) => ({ ...prev, frequency: undefined }));
+        }}
       />
 
       <UploadImageSheet
@@ -404,6 +544,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.textPrimary,
     marginBottom: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: "transparent",
   },
   uploadBox: {
     borderWidth: 1.5,
@@ -438,6 +580,17 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     padding: spacing.sm + 4,
     gap: spacing.sm,
+    borderWidth: 1.5,
+    borderColor: "transparent",
+  },
+  fieldError: {
+    borderColor: colors.danger,
+  },
+  errorText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.danger,
+    marginTop: spacing.xs,
   },
   pickerFieldHeader: {
     flexDirection: "row",
