@@ -170,9 +170,8 @@ export function TimePickerSheet({
       onRequestClose={onClose}
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable
+        <View
           style={[styles.sheet, { paddingBottom: spacing.lg + insets.bottom }]}
-          onPress={(e) => e.stopPropagation()}
         >
           <View style={styles.grabHandle} />
 
@@ -217,7 +216,7 @@ export function TimePickerSheet({
           <Pressable style={styles.saveButton} onPress={handleSave}>
             <Text style={styles.saveButtonText}>Save Time</Text>
           </Pressable>
-        </Pressable>
+        </View>
       </Pressable>
     </Modal>
   );
