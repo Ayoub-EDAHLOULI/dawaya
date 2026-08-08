@@ -20,6 +20,10 @@ import {
   FrequencyValue,
 } from "../components/FrequencyPickerSheet";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
+import {
+  UploadImageOption,
+  UploadImageSheet,
+} from "../components/UploadImageSheet";
 import { colors, radii, spacing } from "../constants/theme";
 
 const MONTH_LABELS = [
@@ -66,6 +70,10 @@ export default function AddAlertScreen() {
   const [dosage, setDosage] = useState<DosageValue | null>(null);
   const [isFrequencyPickerVisible, setFrequencyPickerVisible] = useState(false);
   const [frequency, setFrequency] = useState<FrequencyValue | null>(null);
+  const [isUploadSheetVisible, setUploadSheetVisible] = useState(false);
+  const [imageSource, setImageSource] = useState<UploadImageOption | null>(
+    null,
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -91,12 +99,27 @@ export default function AddAlertScreen() {
           placeholderTextColor={colors.textMuted}
         />
 
-        <Pressable style={styles.uploadBox}>
-          <Ionicons name="image-outline" size={28} color={colors.textMuted} />
-          <Text style={styles.uploadText}>
-            <Text style={styles.uploadTextLink}>Take a photo</Text> or upload
-            from device
-          </Text>
+        <Pressable
+          style={styles.uploadBox}
+          onPress={() => setUploadSheetVisible(true)}
+        >
+          <Ionicons
+            name={imageSource ? "checkmark-circle" : "image-outline"}
+            size={28}
+            color={imageSource ? colors.primary : colors.textMuted}
+          />
+          {imageSource ? (
+            <Text style={styles.uploadText}>
+              {imageSource === "camera"
+                ? "Photo ready to capture"
+                : "Image selected from device"}
+            </Text>
+          ) : (
+            <Text style={styles.uploadText}>
+              <Text style={styles.uploadTextLink}>Take a photo</Text> or upload
+              from device
+            </Text>
+          )}
           <Text style={styles.uploadHint}>JPG, JPEG, PNG less than 1MB</Text>
         </Pressable>
 
@@ -266,6 +289,12 @@ export default function AddAlertScreen() {
         initialValue={frequency ?? undefined}
         onClose={() => setFrequencyPickerVisible(false)}
         onSave={setFrequency}
+      />
+
+      <UploadImageSheet
+        visible={isUploadSheetVisible}
+        onClose={() => setUploadSheetVisible(false)}
+        onSelect={setImageSource}
       />
     </SafeAreaView>
   );
