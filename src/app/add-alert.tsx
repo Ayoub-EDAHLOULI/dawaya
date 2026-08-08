@@ -163,7 +163,7 @@ export default function AddAlertScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+    <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}>
@@ -226,7 +226,10 @@ export default function AddAlertScreen() {
         <View style={styles.row}>
           <View style={styles.rowItem}>
             <Pressable
-              style={[styles.pickerField, errors.startDate && styles.fieldError]}
+              style={[
+                styles.pickerField,
+                errors.startDate && styles.fieldError,
+              ]}
               onPress={() => setDatePickerVisible(true)}
             >
               <View style={styles.pickerFieldHeader}>

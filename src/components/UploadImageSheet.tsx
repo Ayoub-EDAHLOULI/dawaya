@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
 
 export type UploadImageOption = "camera" | "device";
@@ -24,6 +25,7 @@ export function UploadImageSheet({
   onClose,
   onSelect,
 }: UploadImageSheetProps) {
+  const insets = useSafeAreaInsets();
   const handleSelect = (option: UploadImageOption) => {
     onSelect(option);
     onClose();
@@ -37,7 +39,10 @@ export function UploadImageSheet({
       onRequestClose={onClose}
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+        <Pressable
+          style={[styles.sheet, { paddingBottom: spacing.xl + insets.bottom }]}
+          onPress={(e) => e.stopPropagation()}
+        >
           <View style={styles.grabHandle} />
 
           {/* Header */}
@@ -82,7 +87,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radii.lg + 4,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.xl,
   },
   grabHandle: {
     alignSelf: "center",

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
 
 const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
@@ -45,6 +46,7 @@ export function DatePickerSheet({
   onClose,
   onSave,
 }: DatePickerSheetProps) {
+  const insets = useSafeAreaInsets();
   const today = initialDate ?? new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -90,7 +92,10 @@ export function DatePickerSheet({
       onRequestClose={onClose}
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
-        <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>
+        <Pressable
+          style={[styles.sheet, { paddingBottom: spacing.lg + insets.bottom }]}
+          onPress={(e) => e.stopPropagation()}
+        >
           <View style={styles.grabHandle} />
 
           {/* Header */}
@@ -187,7 +192,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: radii.lg + 4,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.sm,
-    paddingBottom: spacing.lg,
   },
   grabHandle: {
     alignSelf: "center",
