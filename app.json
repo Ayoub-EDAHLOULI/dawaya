@@ -13,6 +13,7 @@
     },
     "android": {
       "package": "com.ayoubedahlouli.dawaya",
+      "backgroundColor": "#F3F4F6",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./src/assets/images/android-icon-foreground.png",

@@ -1,13 +1,11 @@
-import { useTranslation } from "react-i18next";
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 
 export default function ReportsScreen() {
-  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>{t("nav.reports")}</Text>
+      <Text style={styles.title}>Reports</Text>
     </SafeAreaView>
   );
 }

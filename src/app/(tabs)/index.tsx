@@ -2,10 +2,10 @@ import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 
-export default function MyMedsScreen() {
+export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>My Meds</Text>
+      <Text style={styles.title}>Home</Text>
     </SafeAreaView>
   );
 }

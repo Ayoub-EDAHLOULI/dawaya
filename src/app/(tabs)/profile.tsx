@@ -1,13 +1,11 @@
-import { useTranslation } from "react-i18next";
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { colors } from "../../constants/theme";
 
 export default function ProfileScreen() {
-  const { t } = useTranslation();
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>{t("nav.profile")}</Text>
+      <Text style={styles.title}>Profile</Text>
     </SafeAreaView>
   );
 }

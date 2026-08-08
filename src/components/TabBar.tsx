@@ -3,23 +3,23 @@ import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
   useAnimatedStyle,
   withSpring,
   withTiming,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii } from "../constants/theme";
 
 const ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  home: "home-outline",
+  index: "home-outline",
   "my-meds": "medkit-outline",
   reports: "pie-chart-outline",
   profile: "person-outline",
 };
 
 const ACTIVE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  home: "home",
+  index: "home",
   "my-meds": "medkit",
   reports: "pie-chart",
   profile: "person",
@@ -37,7 +37,9 @@ function TabButton({
   onPress: () => void;
 }) {
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: withSpring(isFocused ? -2 : 0, { damping: 14 }) }],
+    transform: [
+      { translateY: withSpring(isFocused ? -2 : 0, { damping: 14 }) },
+    ],
   }));
 
   const dotStyle = useAnimatedStyle(() => ({
@@ -118,10 +120,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 
       <Pressable
         onPress={() => router.push("/add-alert")}
-        style={({ pressed }) => [
-          styles.fab,
-          pressed && styles.fabPressed,
-        ]}
+        style={({ pressed }) => [styles.fab, pressed && styles.fabPressed]}
         accessibilityRole="button"
         accessibilityLabel="Add alert"
       >
@@ -136,7 +135,7 @@ const FAB_SIZE = 58;
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: "transparent",
+    backgroundColor: colors.surface,
   },
   bar: {
     flexDirection: "row",
