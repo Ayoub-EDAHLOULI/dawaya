@@ -48,13 +48,15 @@
       "beforeMeal": "Qbel makla",
       "afterMeal": "Mn b3d makla",
       "createReminder": "Sift Reminder",
+      "creating": "Kaysajjel...",
       "everyInterval": "Kol {{interval}} {{unit}}",
       "errors": {
         "medicineNameRequired": "Khass tkteb smiya dyal dwa",
         "startDateRequired": "Khass tarikh dyal bidaya",
         "frequencyRequired": "Khass chhal dyal mera",
         "doseAmountRequired": "Khass kmiya dyal doz",
-        "timeRequired": "Khass waqt"
+        "timeRequired": "Khass waqt",
+        "saveFailed": "Mqdrnach nsajjlou had reminder. 3awd jerreb."
       }
     },
     "datePicker": {

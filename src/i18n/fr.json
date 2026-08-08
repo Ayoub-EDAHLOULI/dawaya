@@ -48,13 +48,15 @@
       "beforeMeal": "Avant le repas",
       "afterMeal": "Après le repas",
       "createReminder": "Créer le rappel",
+      "creating": "Création...",
       "everyInterval": "Tous les {{interval}} {{unit}}",
       "errors": {
         "medicineNameRequired": "Le nom du médicament est requis",
         "startDateRequired": "La date de début est requise",
         "frequencyRequired": "La fréquence est requise",
         "doseAmountRequired": "La quantité est requise",
-        "timeRequired": "L'heure est requise"
+        "timeRequired": "L'heure est requise",
+        "saveFailed": "Impossible d'enregistrer ce rappel. Veuillez réessayer."
       }
     },
     "datePicker": {

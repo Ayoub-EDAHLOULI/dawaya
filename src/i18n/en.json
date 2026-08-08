@@ -48,13 +48,15 @@
       "beforeMeal": "Before Meal",
       "afterMeal": "After Meal",
       "createReminder": "Create Reminder",
+      "creating": "Creating...",
       "everyInterval": "Every {{interval}} {{unit}}",
       "errors": {
         "medicineNameRequired": "Medicine name is required",
         "startDateRequired": "Start date is required",
         "frequencyRequired": "Frequency is required",
         "doseAmountRequired": "Dose amount is required",
-        "timeRequired": "Time is required"
+        "timeRequired": "Time is required",
+        "saveFailed": "Couldn't save this reminder. Please try again."
       }
     },
     "datePicker": {

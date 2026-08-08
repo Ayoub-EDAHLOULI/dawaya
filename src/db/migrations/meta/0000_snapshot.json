@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "eb2e4af8-d00d-4316-aa03-06166436a7d9",
+  "id": "de7afa0f-85b0-425c-baa2-c3e0b7809e60",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "adherence_logs": {
@@ -21,8 +21,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "schedule_id": {
-          "name": "schedule_id",
+        "dose_id": {
+          "name": "dose_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -65,12 +65,92 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "adherence_logs_schedule_id_schedules_id_fk": {
-          "name": "adherence_logs_schedule_id_schedules_id_fk",
+        "adherence_logs_dose_id_doses_id_fk": {
+          "name": "adherence_logs_dose_id_doses_id_fk",
           "tableFrom": "adherence_logs",
-          "tableTo": "schedules",
+          "tableTo": "doses",
           "columnsFrom": [
-            "schedule_id"
+            "dose_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "doses": {
+      "name": "doses",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "medication_id": {
+          "name": "medication_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "unit": {
+          "name": "unit",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "time_of_day": {
+          "name": "time_of_day",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "meal_timing": {
+          "name": "meal_timing",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "notification_id": {
+          "name": "notification_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "doses_medication_id_medications_id_fk": {
+          "name": "doses_medication_id_medications_id_fk",
+          "tableFrom": "doses",
+          "tableTo": "medications",
+          "columnsFrom": [
+            "medication_id"
           ],
           "columnsTo": [
             "id"
@@ -100,13 +180,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "dosage": {
-          "name": "dosage",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "image_uri": {
           "name": "image_uri",
           "type": "text",
@@ -123,6 +196,27 @@
         },
         "color_tag": {
           "name": "color_tag",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "frequency_interval": {
+          "name": "frequency_interval",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "frequency_unit": {
+          "name": "frequency_unit",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -146,72 +240,6 @@
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "schedules": {
-      "name": "schedules",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "medication_id": {
-          "name": "medication_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "time_of_day": {
-          "name": "time_of_day",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "days_of_week": {
-          "name": "days_of_week",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "notification_id": {
-          "name": "notification_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "schedules_medication_id_medications_id_fk": {
-          "name": "schedules_medication_id_medications_id_fk",
-          "tableFrom": "schedules",
-          "tableTo": "medications",
-          "columnsFrom": [
-            "medication_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}

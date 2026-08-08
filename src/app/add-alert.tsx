@@ -25,6 +25,8 @@ import { MealTiming, MealTimingSwitch } from "../components/MealTimingSwitch";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
 import { UploadImageSheet } from "../components/UploadImageSheet";
 import { colors, radii, spacing } from "../constants/theme";
+import { db } from "../db";
+import { doses as dosesTable, medications } from "../db/schema";
 
 function formatDate(date: Date, monthLabels: string[]) {
   return `${date.getDate()} ${monthLabels[date.getMonth()]} ${date.getFullYear()}`;
@@ -48,6 +50,24 @@ const FREQUENCY_UNIT_KEYS: Record<FrequencyValue["unit"], string> = {
   Week: "week",
   Month: "month",
 };
+
+const FREQUENCY_UNIT_DB_VALUES: Record<
+  FrequencyValue["unit"],
+  "hour" | "day" | "week" | "month"
+> = {
+  Hour: "hour",
+  Day: "day",
+  Week: "week",
+  Month: "month",
+};
+
+function to24HourTime(value: TimeValue): string {
+  let hour24 = value.hour % 12;
+  if (value.meridiem === "PM") hour24 += 12;
+  return `${hour24.toString().padStart(2, "0")}:${value.minute
+    .toString()
+    .padStart(2, "0")}`;
+}
 
 function formatFrequency(
   value: FrequencyValue,
@@ -106,6 +126,8 @@ export default function AddAlertScreen() {
   const [isTimePickerVisible, setTimePickerVisible] = useState(false);
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const [isSaving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const activeDose = doses.find((d) => d.id === activeDoseId) ?? null;
 
@@ -160,10 +182,49 @@ export default function AddAlertScreen() {
     );
   };
 
-  const handleCreate = () => {
+  const handleCreate = async () => {
     if (!validate()) return;
-    // TODO: wire up actual reminder creation once the database layer is back.
-    router.back();
+
+    if (!db) {
+      // No database on web (expo-sqlite has no reliable web backend yet).
+      router.back();
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const [medication] = await db
+        .insert(medications)
+        .values({
+          name: medicineName.trim(),
+          imageUri: imageUri ?? undefined,
+          startDate: startDate as Date,
+          frequencyInterval: (frequency as FrequencyValue).interval,
+          frequencyUnit:
+            FREQUENCY_UNIT_DB_VALUES[(frequency as FrequencyValue).unit],
+          createdAt: new Date(),
+        })
+        .returning();
+
+      await db.insert(dosesTable).values(
+        doses.map((dose) => ({
+          medicationId: medication.id,
+          amount: (dose.dosage as DosageValue).amount,
+          unit: (dose.dosage as DosageValue).unit,
+          timeOfDay: to24HourTime(dose.time as TimeValue),
+          mealTiming: dose.mealTiming,
+          createdAt: new Date(),
+        })),
+      );
+
+      router.back();
+    } catch (err) {
+      console.error("Failed to save reminder:", err);
+      setSaveError(t("addAlert.errors.saveFailed"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -439,8 +500,15 @@ export default function AddAlertScreen() {
 
       {/* CTA */}
       <View style={styles.footer}>
-        <Pressable style={styles.cta} onPress={handleCreate}>
-          <Text style={styles.ctaText}>{t("addAlert.createReminder")}</Text>
+        {saveError && <Text style={styles.saveErrorText}>{saveError}</Text>}
+        <Pressable
+          style={[styles.cta, isSaving && styles.ctaDisabled]}
+          onPress={handleCreate}
+          disabled={isSaving}
+        >
+          <Text style={styles.ctaText}>
+            {isSaving ? t("addAlert.creating") : t("addAlert.createReminder")}
+          </Text>
         </Pressable>
       </View>
 
@@ -694,9 +762,19 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  ctaDisabled: {
+    opacity: 0.6,
+  },
   ctaText: {
     fontSize: 16,
     fontWeight: "700",
     color: "#ffffff",
+  },
+  saveErrorText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: colors.danger,
+    textAlign: "center",
+    marginBottom: spacing.sm,
   },
 });
