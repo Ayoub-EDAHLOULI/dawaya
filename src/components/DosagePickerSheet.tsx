@@ -162,7 +162,14 @@ export function DosagePickerSheet({
       animationType="slide"
       onRequestClose={onClose}
     >
-      <Pressable style={styles.backdrop} onPress={onClose}>
+      <View style={styles.backdrop}>
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={onClose}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
+
         <View
           style={[styles.sheet, { paddingBottom: spacing.lg + insets.bottom }]}
         >
@@ -203,7 +210,7 @@ export function DosagePickerSheet({
             <Text style={styles.saveButtonText}>Save Dosage</Text>
           </Pressable>
         </View>
-      </Pressable>
+      </View>
     </Modal>
   );
 }
