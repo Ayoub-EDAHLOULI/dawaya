@@ -15,6 +15,10 @@ import {
   DosagePickerSheet,
   DosageValue,
 } from "../components/DosagePickerSheet";
+import {
+  FrequencyPickerSheet,
+  FrequencyValue,
+} from "../components/FrequencyPickerSheet";
 import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
 import { colors, radii, spacing } from "../constants/theme";
 
@@ -47,6 +51,11 @@ function formatDosage(value: DosageValue) {
   return `${value.amount} ${value.unit}`;
 }
 
+function formatFrequency(value: FrequencyValue) {
+  const unit = value.interval === 1 ? value.unit : `${value.unit}s`;
+  return `Every ${value.interval} ${unit}`;
+}
+
 export default function AddAlertScreen() {
   const router = useRouter();
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
@@ -55,6 +64,8 @@ export default function AddAlertScreen() {
   const [doseTime, setDoseTime] = useState<TimeValue | null>(null);
   const [isDosagePickerVisible, setDosagePickerVisible] = useState(false);
   const [dosage, setDosage] = useState<DosageValue | null>(null);
+  const [isFrequencyPickerVisible, setFrequencyPickerVisible] = useState(false);
+  const [frequency, setFrequency] = useState<FrequencyValue | null>(null);
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -121,7 +132,10 @@ export default function AddAlertScreen() {
             </View>
           </Pressable>
 
-          <Pressable style={[styles.pickerField, styles.rowItem]}>
+          <Pressable
+            style={[styles.pickerField, styles.rowItem]}
+            onPress={() => setFrequencyPickerVisible(true)}
+          >
             <View style={styles.pickerFieldHeader}>
               <Text style={styles.pickerLabel}>Frequency</Text>
               <Ionicons
@@ -136,7 +150,13 @@ export default function AddAlertScreen() {
                 size={16}
                 color={colors.textMuted}
               />
-              <Text style={styles.pickerPlaceholder}>Select frequency</Text>
+              <Text
+                style={
+                  frequency ? styles.pickerValue : styles.pickerPlaceholder
+                }
+              >
+                {frequency ? formatFrequency(frequency) : "Select frequency"}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -239,6 +259,13 @@ export default function AddAlertScreen() {
         initialValue={dosage ?? undefined}
         onClose={() => setDosagePickerVisible(false)}
         onSave={setDosage}
+      />
+
+      <FrequencyPickerSheet
+        visible={isFrequencyPickerVisible}
+        initialValue={frequency ?? undefined}
+        onClose={() => setFrequencyPickerVisible(false)}
+        onSave={setFrequency}
       />
     </SafeAreaView>
   );
