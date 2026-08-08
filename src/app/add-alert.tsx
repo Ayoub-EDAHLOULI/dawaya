@@ -61,21 +61,49 @@ function formatFrequency(value: FrequencyValue) {
   return `Every ${value.interval} ${unit}`;
 }
 
+type DoseEntry = {
+  id: string;
+  dosage: DosageValue | null;
+  time: TimeValue | null;
+  mealTiming: MealTiming;
+};
+
+let nextDoseId = 1;
+function createDoseEntry(): DoseEntry {
+  return {
+    id: `dose-${nextDoseId++}`,
+    dosage: null,
+    time: null,
+    mealTiming: "after",
+  };
+}
+
 export default function AddAlertScreen() {
   const router = useRouter();
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
-  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
-  const [doseTime, setDoseTime] = useState<TimeValue | null>(null);
-  const [isDosagePickerVisible, setDosagePickerVisible] = useState(false);
-  const [dosage, setDosage] = useState<DosageValue | null>(null);
   const [isFrequencyPickerVisible, setFrequencyPickerVisible] = useState(false);
   const [frequency, setFrequency] = useState<FrequencyValue | null>(null);
   const [isUploadSheetVisible, setUploadSheetVisible] = useState(false);
   const [imageSource, setImageSource] = useState<UploadImageOption | null>(
     null,
   );
-  const [mealTiming, setMealTiming] = useState<MealTiming>("after");
+
+  const [doses, setDoses] = useState<DoseEntry[]>([createDoseEntry()]);
+  const [activeDoseId, setActiveDoseId] = useState<string | null>(null);
+  const [isDosagePickerVisible, setDosagePickerVisible] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false);
+
+  const activeDose = doses.find((d) => d.id === activeDoseId) ?? null;
+
+  const updateDose = (id: string, patch: Partial<DoseEntry>) => {
+    setDoses((prev) => prev.map((d) => (d.id === id ? { ...d, ...patch } : d)));
+  };
+
+  const addDose = () => setDoses((prev) => [...prev, createDoseEntry()]);
+
+  const removeDose = (id: string) =>
+    setDoses((prev) => prev.filter((d) => d.id !== id));
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
@@ -187,67 +215,93 @@ export default function AddAlertScreen() {
         </View>
 
         {/* Dose */}
-        <Text style={styles.sectionLabel}>Dose</Text>
-
-        <View style={styles.row}>
-          <Pressable
-            style={[styles.pickerField, styles.rowItem]}
-            onPress={() => setDosagePickerVisible(true)}
-          >
-            <View style={styles.pickerFieldHeader}>
-              <Text style={styles.pickerLabel}>Dose amount</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={colors.textMuted}
-              />
+        {doses.map((dose, index) => (
+          <View key={dose.id}>
+            <View style={styles.doseSectionHeader}>
+              <Text style={styles.sectionLabel}>Dose {index + 1}</Text>
+              {doses.length > 1 && (
+                <Pressable onPress={() => removeDose(dose.id)} hitSlop={8}>
+                  <Text style={styles.removeText}>Remove</Text>
+                </Pressable>
+              )}
             </View>
-            <View style={styles.pickerValueRow}>
-              <Ionicons
-                name="medical-outline"
-                size={16}
-                color={colors.textMuted}
-              />
-              <Text
-                style={dosage ? styles.pickerValue : styles.pickerPlaceholder}
+
+            <View style={styles.row}>
+              <Pressable
+                style={[styles.pickerField, styles.rowItem]}
+                onPress={() => {
+                  setActiveDoseId(dose.id);
+                  setDosagePickerVisible(true);
+                }}
               >
-                {dosage ? formatDosage(dosage) : "Select dosage"}
-              </Text>
-            </View>
-          </Pressable>
+                <View style={styles.pickerFieldHeader}>
+                  <Text style={styles.pickerLabel}>Dose amount</Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={16}
+                    color={colors.textMuted}
+                  />
+                </View>
+                <View style={styles.pickerValueRow}>
+                  <Ionicons
+                    name="medical-outline"
+                    size={16}
+                    color={colors.textMuted}
+                  />
+                  <Text
+                    style={
+                      dose.dosage
+                        ? styles.pickerValue
+                        : styles.pickerPlaceholder
+                    }
+                  >
+                    {dose.dosage ? formatDosage(dose.dosage) : "Select dosage"}
+                  </Text>
+                </View>
+              </Pressable>
 
-          <Pressable
-            style={[styles.pickerField, styles.rowItem]}
-            onPress={() => setTimePickerVisible(true)}
-          >
-            <View style={styles.pickerFieldHeader}>
-              <Text style={styles.pickerLabel}>Time</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={16}
-                color={colors.textMuted}
-              />
-            </View>
-            <View style={styles.pickerValueRow}>
-              <Ionicons
-                name="time-outline"
-                size={16}
-                color={colors.textMuted}
-              />
-              <Text
-                style={doseTime ? styles.pickerValue : styles.pickerPlaceholder}
+              <Pressable
+                style={[styles.pickerField, styles.rowItem]}
+                onPress={() => {
+                  setActiveDoseId(dose.id);
+                  setTimePickerVisible(true);
+                }}
               >
-                {doseTime ? formatTime(doseTime) : "Select time"}
-              </Text>
+                <View style={styles.pickerFieldHeader}>
+                  <Text style={styles.pickerLabel}>Time</Text>
+                  <Ionicons
+                    name="chevron-forward"
+                    size={16}
+                    color={colors.textMuted}
+                  />
+                </View>
+                <View style={styles.pickerValueRow}>
+                  <Ionicons
+                    name="time-outline"
+                    size={16}
+                    color={colors.textMuted}
+                  />
+                  <Text
+                    style={
+                      dose.time ? styles.pickerValue : styles.pickerPlaceholder
+                    }
+                  >
+                    {dose.time ? formatTime(dose.time) : "Select time"}
+                  </Text>
+                </View>
+              </Pressable>
             </View>
-          </Pressable>
-        </View>
 
-        <View style={styles.mealTimingRow}>
-          <MealTimingSwitch value={mealTiming} onChange={setMealTiming} />
-        </View>
+            <View style={styles.mealTimingRow}>
+              <MealTimingSwitch
+                value={dose.mealTiming}
+                onChange={(value) => updateDose(dose.id, { mealTiming: value })}
+              />
+            </View>
+          </View>
+        ))}
 
-        <Pressable style={styles.addDosageRow}>
+        <Pressable style={styles.addDosageRow} onPress={addDose}>
           <Ionicons name="add" size={18} color={colors.primary} />
           <Text style={styles.addDosageText}>Add another dosage</Text>
         </Pressable>
@@ -269,16 +323,20 @@ export default function AddAlertScreen() {
 
       <TimePickerSheet
         visible={isTimePickerVisible}
-        initialValue={doseTime ?? undefined}
+        initialValue={activeDose?.time ?? undefined}
         onClose={() => setTimePickerVisible(false)}
-        onSave={setDoseTime}
+        onSave={(value) => {
+          if (activeDoseId) updateDose(activeDoseId, { time: value });
+        }}
       />
 
       <DosagePickerSheet
         visible={isDosagePickerVisible}
-        initialValue={dosage ?? undefined}
+        initialValue={activeDose?.dosage ?? undefined}
         onClose={() => setDosagePickerVisible(false)}
-        onSave={setDosage}
+        onSave={(value) => {
+          if (activeDoseId) updateDose(activeDoseId, { dosage: value });
+        }}
       />
 
       <FrequencyPickerSheet
@@ -327,6 +385,16 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginTop: spacing.lg,
     marginBottom: spacing.sm,
+  },
+  doseSectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  removeText: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: colors.danger,
   },
   textInput: {
     backgroundColor: colors.background,
