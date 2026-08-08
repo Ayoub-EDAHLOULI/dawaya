@@ -19,6 +19,79 @@
     "settings": {
       "title": "Paramètres",
       "language": "Langue"
+    },
+    "months": {
+      "short": ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+    },
+    "weekdays": {
+      "short": ["L", "M", "M", "J", "V", "S", "D"]
+    },
+    "addAlert": {
+      "title": "Créer une alerte",
+      "medicineInfo": "Informations sur le médicament",
+      "medicineNamePlaceholder": "Entrez le nom du médicament",
+      "takePhoto": "Prendre une photo",
+      "uploadFromDevice": "ou importer depuis l'appareil",
+      "imageHint": "JPG, JPEG, PNG de moins de 1 Mo",
+      "schedule": "Planning",
+      "startDate": "Date de début",
+      "frequency": "Fréquence",
+      "selectDate": "Sélectionner une date",
+      "selectFrequency": "Sélectionner une fréquence",
+      "dose": "Dose {{number}}",
+      "doseAmount": "Quantité",
+      "time": "Heure",
+      "selectDosage": "Sélectionner la dose",
+      "selectTime": "Sélectionner l'heure",
+      "remove": "Supprimer",
+      "addAnotherDosage": "Ajouter une autre dose",
+      "beforeMeal": "Avant le repas",
+      "afterMeal": "Après le repas",
+      "createReminder": "Créer le rappel",
+      "everyInterval": "Tous les {{interval}} {{unit}}",
+      "errors": {
+        "medicineNameRequired": "Le nom du médicament est requis",
+        "startDateRequired": "La date de début est requise",
+        "frequencyRequired": "La fréquence est requise",
+        "doseAmountRequired": "La quantité est requise",
+        "timeRequired": "L'heure est requise"
+      }
+    },
+    "datePicker": {
+      "title": "Sélectionner une date",
+      "save": "Enregistrer la date"
+    },
+    "timePicker": {
+      "title": "Sélectionner l'heure",
+      "save": "Enregistrer l'heure"
+    },
+    "dosagePicker": {
+      "title": "Sélectionner la dose",
+      "save": "Enregistrer la dose",
+      "drops": "Gouttes",
+      "pills": "Comprimés"
+    },
+    "frequencyPicker": {
+      "title": "Définir la fréquence",
+      "every": "Tous les",
+      "save": "Enregistrer",
+      "hour_one": "Heure",
+      "hour_other": "Heures",
+      "day_one": "Jour",
+      "day_other": "Jours",
+      "week_one": "Semaine",
+      "week_other": "Semaines",
+      "month_one": "Mois",
+      "month_other": "Mois"
+    },
+    "uploadImage": {
+      "title": "Importer une image",
+      "takePhoto": "Prendre une photo",
+      "uploadFromDevice": "Importer depuis l'appareil",
+      "cameraPermissionTitle": "Accès à l'appareil photo requis",
+      "cameraPermissionBody": "Activez l'accès à l'appareil photo dans les paramètres de votre appareil pour prendre une photo du médicament.",
+      "photoPermissionTitle": "Accès aux photos requis",
+      "photoPermissionBody": "Activez l'accès à la photothèque dans les paramètres de votre appareil pour joindre une photo du médicament."
     }
   }
 }

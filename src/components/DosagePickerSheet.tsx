@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   NativeScrollEvent,
@@ -123,6 +124,11 @@ export function DosagePickerSheet({
   onSave,
 }: DosagePickerSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const unitLabels: Record<DosageValue["unit"], string> = {
+    Drops: t("dosagePicker.drops"),
+    Pills: t("dosagePicker.pills"),
+  };
   const toIndices = (value: DosageValue) => ({
     amount:
       AMOUNTS.indexOf(value.amount) === -1 ? 0 : AMOUNTS.indexOf(value.amount),
@@ -177,7 +183,7 @@ export function DosagePickerSheet({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Select dosage</Text>
+            <Text style={styles.headerTitle}>{t("dosagePicker.title")}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
@@ -201,13 +207,13 @@ export function DosagePickerSheet({
               data={UNITS}
               initialIndex={unitIndexRef.current}
               onSettle={(i) => (unitIndexRef.current = i)}
-              renderLabel={(u) => u}
+              renderLabel={(u) => unitLabels[u]}
               align="flex-start"
             />
           </View>
 
           <Pressable style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Dosage</Text>
+            <Text style={styles.saveButtonText}>{t("dosagePicker.save")}</Text>
           </Pressable>
         </View>
       </View>

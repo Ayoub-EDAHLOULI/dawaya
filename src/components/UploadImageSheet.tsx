@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useTranslation } from "react-i18next";
 import { Alert, Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
@@ -10,6 +11,8 @@ type UploadImageSheetProps = {
   onPicked: (uri: string) => void;
 };
 
+type TFunction = (key: string) => string;
+
 const IMAGE_PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   mediaTypes: ["images"],
   allowsEditing: true,
@@ -17,12 +20,12 @@ const IMAGE_PICKER_OPTIONS: ImagePicker.ImagePickerOptions = {
   quality: 0.7,
 };
 
-async function pickFromCamera(): Promise<string | null> {
+async function pickFromCamera(t: TFunction): Promise<string | null> {
   const permission = await ImagePicker.requestCameraPermissionsAsync();
   if (!permission.granted) {
     Alert.alert(
-      "Camera access needed",
-      "Enable camera access in your device settings to take a photo of the medication.",
+      t("uploadImage.cameraPermissionTitle"),
+      t("uploadImage.cameraPermissionBody"),
     );
     return null;
   }
@@ -32,12 +35,12 @@ async function pickFromCamera(): Promise<string | null> {
   return result.assets[0].uri;
 }
 
-async function pickFromLibrary(): Promise<string | null> {
+async function pickFromLibrary(t: TFunction): Promise<string | null> {
   const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
   if (!permission.granted) {
     Alert.alert(
-      "Photo access needed",
-      "Enable photo library access in your device settings to attach a picture of the medication.",
+      t("uploadImage.photoPermissionTitle"),
+      t("uploadImage.photoPermissionBody"),
     );
     return null;
   }
@@ -50,19 +53,19 @@ async function pickFromLibrary(): Promise<string | null> {
 
 const OPTIONS: {
   key: "camera" | "device";
-  label: string;
+  labelKey: string;
   icon: keyof typeof Ionicons.glyphMap;
-  pick: () => Promise<string | null>;
+  pick: (t: TFunction) => Promise<string | null>;
 }[] = [
   {
     key: "camera",
-    label: "Take a photo",
+    labelKey: "uploadImage.takePhoto",
     icon: "camera-outline",
     pick: pickFromCamera,
   },
   {
     key: "device",
-    label: "Upload from device",
+    labelKey: "uploadImage.uploadFromDevice",
     icon: "cloud-upload-outline",
     pick: pickFromLibrary,
   },
@@ -74,10 +77,11 @@ export function UploadImageSheet({
   onPicked,
 }: UploadImageSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
 
   const handleSelect = async (option: (typeof OPTIONS)[number]) => {
     onClose();
-    const uri = await option.pick();
+    const uri = await option.pick(t);
     if (uri) onPicked(uri);
   };
 
@@ -103,7 +107,7 @@ export function UploadImageSheet({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Upload image</Text>
+            <Text style={styles.headerTitle}>{t("uploadImage.title")}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
@@ -121,7 +125,7 @@ export function UploadImageSheet({
                 onPress={() => handleSelect(option)}
               >
                 <Ionicons name={option.icon} size={22} color={colors.primary} />
-                <Text style={styles.optionLabel}>{option.label}</Text>
+                <Text style={styles.optionLabel}>{t(option.labelKey)}</Text>
               </Pressable>
             ))}
           </View>

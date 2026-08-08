@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   NativeScrollEvent,
@@ -116,6 +117,7 @@ export function TimePickerSheet({
   onSave,
 }: TimePickerSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const toIndices = (value: TimeValue) => ({
     hour: HOURS.indexOf(value.hour) === -1 ? 0 : HOURS.indexOf(value.hour),
     minute: value.minute,
@@ -184,7 +186,7 @@ export function TimePickerSheet({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Select time</Text>
+            <Text style={styles.headerTitle}>{t("timePicker.title")}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
@@ -221,7 +223,7 @@ export function TimePickerSheet({
           </View>
 
           <Pressable style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Time</Text>
+            <Text style={styles.saveButtonText}>{t("timePicker.save")}</Text>
           </Pressable>
         </View>
       </View>

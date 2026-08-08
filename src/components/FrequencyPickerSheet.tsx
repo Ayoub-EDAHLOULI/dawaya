@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Modal,
   NativeScrollEvent,
@@ -30,14 +31,17 @@ type FrequencyPickerSheetProps = {
 const INTERVALS = Array.from({ length: 30 }, (_, i) => i + 1);
 const UNITS: FrequencyUnit[] = ["Hour", "Day", "Week", "Month"];
 
+const UNIT_KEYS: Record<FrequencyUnit, string> = {
+  Hour: "hour",
+  Day: "day",
+  Week: "week",
+  Month: "month",
+};
+
 const ROW_HEIGHT = 40;
 const VISIBLE_ROWS = 5;
 const WHEEL_HEIGHT = ROW_HEIGHT * VISIBLE_ROWS;
 const SPACER_HEIGHT = ROW_HEIGHT * Math.floor(VISIBLE_ROWS / 2);
-
-function pluralize(unit: FrequencyUnit, interval: number) {
-  return interval === 1 ? unit : `${unit}s`;
-}
 
 type WheelHandle = {
   scrollToIndex: (index: number) => void;
@@ -125,6 +129,9 @@ export function FrequencyPickerSheet({
   onSave,
 }: FrequencyPickerSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const pluralize = (unit: FrequencyUnit, interval: number) =>
+    t(`frequencyPicker.${UNIT_KEYS[unit]}`, { count: interval });
   const toIndices = (value: FrequencyValue) => ({
     interval:
       INTERVALS.indexOf(value.interval) === -1
@@ -185,7 +192,9 @@ export function FrequencyPickerSheet({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Set frequency</Text>
+            <Text style={styles.headerTitle}>
+              {t("frequencyPicker.title")}
+            </Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
@@ -196,7 +205,7 @@ export function FrequencyPickerSheet({
             <View style={styles.selectionHighlight} pointerEvents="none" />
 
             <View style={styles.everyColumn}>
-              <Text style={styles.everyLabel}>Every</Text>
+              <Text style={styles.everyLabel}>{t("frequencyPicker.every")}</Text>
             </View>
 
             <Wheel
@@ -222,7 +231,9 @@ export function FrequencyPickerSheet({
           </View>
 
           <Pressable style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>
+              {t("frequencyPicker.save")}
+            </Text>
           </Pressable>
         </View>
       </View>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, radii, spacing } from "../constants/theme";
 
@@ -8,15 +9,16 @@ type MealTimingSwitchProps = {
   onChange: (value: MealTiming) => void;
 };
 
-const OPTIONS: { key: MealTiming; label: string }[] = [
-  { key: "before", label: "Before Meal" },
-  { key: "after", label: "After Meal" },
-];
-
 export function MealTimingSwitch({ value, onChange }: MealTimingSwitchProps) {
+  const { t } = useTranslation();
+  const options: { key: MealTiming; label: string }[] = [
+    { key: "before", label: t("addAlert.beforeMeal") },
+    { key: "after", label: t("addAlert.afterMeal") },
+  ];
+
   return (
     <View style={styles.row}>
-      {OPTIONS.map((option) => {
+      {options.map((option) => {
         const isSelected = option.key === value;
         return (
           <Pressable

@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Image,
   Pressable,
@@ -25,23 +26,8 @@ import { TimePickerSheet, TimeValue } from "../components/TimePickerSheet";
 import { UploadImageSheet } from "../components/UploadImageSheet";
 import { colors, radii, spacing } from "../constants/theme";
 
-const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
-
-function formatDate(date: Date) {
-  return `${date.getDate()} ${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`;
+function formatDate(date: Date, monthLabels: string[]) {
+  return `${date.getDate()} ${monthLabels[date.getMonth()]} ${date.getFullYear()}`;
 }
 
 function formatTime(value: TimeValue) {
@@ -50,13 +36,30 @@ function formatTime(value: TimeValue) {
     .padStart(2, "0")} ${value.meridiem}`;
 }
 
-function formatDosage(value: DosageValue) {
-  return `${value.amount} ${value.unit}`;
+function formatDosage(value: DosageValue, t: (key: string) => string) {
+  const unitLabel =
+    value.unit === "Drops" ? t("dosagePicker.drops") : t("dosagePicker.pills");
+  return `${value.amount} ${unitLabel}`;
 }
 
-function formatFrequency(value: FrequencyValue) {
-  const unit = value.interval === 1 ? value.unit : `${value.unit}s`;
-  return `Every ${value.interval} ${unit}`;
+const FREQUENCY_UNIT_KEYS: Record<FrequencyValue["unit"], string> = {
+  Hour: "hour",
+  Day: "day",
+  Week: "week",
+  Month: "month",
+};
+
+function formatFrequency(
+  value: FrequencyValue,
+  t: (key: string, options?: Record<string, unknown>) => string,
+) {
+  const unitLabel = t(`frequencyPicker.${FREQUENCY_UNIT_KEYS[value.unit]}`, {
+    count: value.interval,
+  });
+  return t("addAlert.everyInterval", {
+    interval: value.interval,
+    unit: unitLabel,
+  });
 }
 
 type DoseEntry = {
@@ -85,6 +88,10 @@ type FormErrors = {
 
 export default function AddAlertScreen() {
   const router = useRouter();
+  const { t } = useTranslation();
+  const monthLabels = t("months.short", {
+    returnObjects: true,
+  }) as string[];
   const [medicineName, setMedicineName] = useState("");
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -121,20 +128,21 @@ export default function AddAlertScreen() {
     const nextErrors: FormErrors = {};
 
     if (!medicineName.trim()) {
-      nextErrors.medicineName = "Medicine name is required";
+      nextErrors.medicineName = t("addAlert.errors.medicineNameRequired");
     }
     if (!startDate) {
-      nextErrors.startDate = "Start date is required";
+      nextErrors.startDate = t("addAlert.errors.startDateRequired");
     }
     if (!frequency) {
-      nextErrors.frequency = "Frequency is required";
+      nextErrors.frequency = t("addAlert.errors.frequencyRequired");
     }
 
     const doseErrors: Record<string, { dosage?: string; time?: string }> = {};
     for (const dose of doses) {
       const entryErrors: { dosage?: string; time?: string } = {};
-      if (!dose.dosage) entryErrors.dosage = "Dose amount is required";
-      if (!dose.time) entryErrors.time = "Time is required";
+      if (!dose.dosage)
+        entryErrors.dosage = t("addAlert.errors.doseAmountRequired");
+      if (!dose.time) entryErrors.time = t("addAlert.errors.timeRequired");
       if (entryErrors.dosage || entryErrors.time) {
         doseErrors[dose.id] = entryErrors;
       }
@@ -165,7 +173,7 @@ export default function AddAlertScreen() {
         <Pressable onPress={() => router.back()} hitSlop={12}>
           <Ionicons name="chevron-back" size={26} color={colors.textPrimary} />
         </Pressable>
-        <Text style={styles.title}>Create Alert</Text>
+        <Text style={styles.title}>{t("addAlert.title")}</Text>
         <View style={styles.headerSpacer} />
       </View>
 
@@ -174,11 +182,11 @@ export default function AddAlertScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Medicine Info */}
-        <Text style={styles.sectionLabel}>Medicine Info</Text>
+        <Text style={styles.sectionLabel}>{t("addAlert.medicineInfo")}</Text>
 
         <TextInput
           style={[styles.textInput, errors.medicineName && styles.fieldError]}
-          placeholder="Enter medicine name"
+          placeholder={t("addAlert.medicineNamePlaceholder")}
           placeholderTextColor={colors.textMuted}
           value={medicineName}
           onChangeText={(text) => {
@@ -208,21 +216,19 @@ export default function AddAlertScreen() {
             style={styles.uploadBox}
             onPress={() => setUploadSheetVisible(true)}
           >
-            <Ionicons
-              name="image-outline"
-              size={28}
-              color={colors.textMuted}
-            />
+            <Ionicons name="image-outline" size={28} color={colors.textMuted} />
             <Text style={styles.uploadText}>
-              <Text style={styles.uploadTextLink}>Take a photo</Text> or
-              upload from device
+              <Text style={styles.uploadTextLink}>
+                {t("addAlert.takePhoto")}
+              </Text>{" "}
+              {t("addAlert.uploadFromDevice")}
             </Text>
-            <Text style={styles.uploadHint}>JPG, JPEG, PNG less than 1MB</Text>
+            <Text style={styles.uploadHint}>{t("addAlert.imageHint")}</Text>
           </Pressable>
         )}
 
         {/* Schedule */}
-        <Text style={styles.sectionLabel}>Schedule</Text>
+        <Text style={styles.sectionLabel}>{t("addAlert.schedule")}</Text>
 
         <View style={styles.row}>
           <View style={styles.rowItem}>
@@ -234,7 +240,9 @@ export default function AddAlertScreen() {
               onPress={() => setDatePickerVisible(true)}
             >
               <View style={styles.pickerFieldHeader}>
-                <Text style={styles.pickerLabel}>Start date</Text>
+                <Text style={styles.pickerLabel}>
+                  {t("addAlert.startDate")}
+                </Text>
                 <Ionicons
                   name="chevron-forward"
                   size={16}
@@ -252,7 +260,9 @@ export default function AddAlertScreen() {
                     startDate ? styles.pickerValue : styles.pickerPlaceholder
                   }
                 >
-                  {startDate ? formatDate(startDate) : "Select date"}
+                  {startDate
+                    ? formatDate(startDate, monthLabels)
+                    : t("addAlert.selectDate")}
                 </Text>
               </View>
             </Pressable>
@@ -270,7 +280,9 @@ export default function AddAlertScreen() {
               onPress={() => setFrequencyPickerVisible(true)}
             >
               <View style={styles.pickerFieldHeader}>
-                <Text style={styles.pickerLabel}>Frequency</Text>
+                <Text style={styles.pickerLabel}>
+                  {t("addAlert.frequency")}
+                </Text>
                 <Ionicons
                   name="chevron-forward"
                   size={16}
@@ -288,7 +300,9 @@ export default function AddAlertScreen() {
                     frequency ? styles.pickerValue : styles.pickerPlaceholder
                   }
                 >
-                  {frequency ? formatFrequency(frequency) : "Select frequency"}
+                  {frequency
+                    ? formatFrequency(frequency, t)
+                    : t("addAlert.selectFrequency")}
                 </Text>
               </View>
             </Pressable>
@@ -302,10 +316,12 @@ export default function AddAlertScreen() {
         {doses.map((dose, index) => (
           <View key={dose.id}>
             <View style={styles.doseSectionHeader}>
-              <Text style={styles.sectionLabel}>Dose {index + 1}</Text>
+              <Text style={styles.sectionLabel}>
+                {t("addAlert.dose", { number: index + 1 })}
+              </Text>
               {doses.length > 1 && (
                 <Pressable onPress={() => removeDose(dose.id)} hitSlop={8}>
-                  <Text style={styles.removeText}>Remove</Text>
+                  <Text style={styles.removeText}>{t("addAlert.remove")}</Text>
                 </Pressable>
               )}
             </View>
@@ -323,7 +339,9 @@ export default function AddAlertScreen() {
                   }}
                 >
                   <View style={styles.pickerFieldHeader}>
-                    <Text style={styles.pickerLabel}>Dose amount</Text>
+                    <Text style={styles.pickerLabel}>
+                      {t("addAlert.doseAmount")}
+                    </Text>
                     <Ionicons
                       name="chevron-forward"
                       size={16}
@@ -344,8 +362,8 @@ export default function AddAlertScreen() {
                       }
                     >
                       {dose.dosage
-                        ? formatDosage(dose.dosage)
-                        : "Select dosage"}
+                        ? formatDosage(dose.dosage, t)
+                        : t("addAlert.selectDosage")}
                     </Text>
                   </View>
                 </Pressable>
@@ -368,7 +386,7 @@ export default function AddAlertScreen() {
                   }}
                 >
                   <View style={styles.pickerFieldHeader}>
-                    <Text style={styles.pickerLabel}>Time</Text>
+                    <Text style={styles.pickerLabel}>{t("addAlert.time")}</Text>
                     <Ionicons
                       name="chevron-forward"
                       size={16}
@@ -388,7 +406,9 @@ export default function AddAlertScreen() {
                           : styles.pickerPlaceholder
                       }
                     >
-                      {dose.time ? formatTime(dose.time) : "Select time"}
+                      {dose.time
+                        ? formatTime(dose.time)
+                        : t("addAlert.selectTime")}
                     </Text>
                   </View>
                 </Pressable>
@@ -411,14 +431,16 @@ export default function AddAlertScreen() {
 
         <Pressable style={styles.addDosageRow} onPress={addDose}>
           <Ionicons name="add" size={18} color={colors.primary} />
-          <Text style={styles.addDosageText}>Add another dosage</Text>
+          <Text style={styles.addDosageText}>
+            {t("addAlert.addAnotherDosage")}
+          </Text>
         </Pressable>
       </ScrollView>
 
       {/* CTA */}
       <View style={styles.footer}>
         <Pressable style={styles.cta} onPress={handleCreate}>
-          <Text style={styles.ctaText}>Create Reminder</Text>
+          <Text style={styles.ctaText}>{t("addAlert.createReminder")}</Text>
         </Pressable>
       </View>
 

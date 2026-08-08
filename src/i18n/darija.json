@@ -19,6 +19,79 @@
     "settings": {
       "title": "I3dadat",
       "language": "Lougha"
+    },
+    "months": {
+      "short": ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil", "Août", "Sep", "Oct", "Nov", "Déc"]
+    },
+    "weekdays": {
+      "short": ["T", "T", "L", "L", "J", "S", "H"]
+    },
+    "addAlert": {
+      "title": "Zid Alert",
+      "medicineInfo": "Ma3loumat dyal dwa",
+      "medicineNamePlaceholder": "Kteb smiya dyal dwa",
+      "takePhoto": "Khod tsawira",
+      "uploadFromDevice": "wla zid mn had appareil",
+      "imageHint": "JPG, JPEG, PNG kter mn 1MB makaynch",
+      "schedule": "Barnamaj",
+      "startDate": "Tarikh dyal bidaya",
+      "frequency": "Chhal dyal mera",
+      "selectDate": "Khtar tarikh",
+      "selectFrequency": "Khtar chhal dyal mera",
+      "dose": "Doz {{number}}",
+      "doseAmount": "Kmiya dyal doz",
+      "time": "Waqt",
+      "selectDosage": "Khtar doz",
+      "selectTime": "Khtar waqt",
+      "remove": "Hyed",
+      "addAnotherDosage": "Zid doz akhor",
+      "beforeMeal": "Qbel makla",
+      "afterMeal": "Mn b3d makla",
+      "createReminder": "Sift Reminder",
+      "everyInterval": "Kol {{interval}} {{unit}}",
+      "errors": {
+        "medicineNameRequired": "Khass tkteb smiya dyal dwa",
+        "startDateRequired": "Khass tarikh dyal bidaya",
+        "frequencyRequired": "Khass chhal dyal mera",
+        "doseAmountRequired": "Khass kmiya dyal doz",
+        "timeRequired": "Khass waqt"
+      }
+    },
+    "datePicker": {
+      "title": "Khtar tarikh",
+      "save": "Sajjel Tarikh"
+    },
+    "timePicker": {
+      "title": "Khtar waqt",
+      "save": "Sajjel Waqt"
+    },
+    "dosagePicker": {
+      "title": "Khtar doz",
+      "save": "Sajjel Doz",
+      "drops": "Qtrat",
+      "pills": "Fnadeq"
+    },
+    "frequencyPicker": {
+      "title": "3ayn chhal dyal mera",
+      "every": "Kol",
+      "save": "Sajjel",
+      "hour_one": "Sa3a",
+      "hour_other": "Swaye3",
+      "day_one": "Nhar",
+      "day_other": "Iyam",
+      "week_one": "Simana",
+      "week_other": "Simanat",
+      "month_one": "Chher",
+      "month_other": "Chhour"
+    },
+    "uploadImage": {
+      "title": "Zid Tsawira",
+      "takePhoto": "Khod tsawira",
+      "uploadFromDevice": "Zid mn appareil",
+      "cameraPermissionTitle": "Khassek ttri7 l'accès dyal camera",
+      "cameraPermissionBody": "7el l'accès dyal camera mn parametres dyal appareil bach tqder takhod tsawira dyal dwa.",
+      "photoPermissionTitle": "Khassek ttri7 l'accès dyal tsawer",
+      "photoPermissionBody": "7el l'accès dyal photothèque mn parametres dyal appareil bach tqder tzid tsawira dyal dwa."
     }
   }
 }

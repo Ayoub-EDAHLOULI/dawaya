@@ -1,24 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, radii, spacing } from "../constants/theme";
-
-const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
-const MONTH_LABELS = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "Jun",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
 
 type DatePickerSheetProps = {
   visible: boolean;
@@ -47,6 +32,11 @@ export function DatePickerSheet({
   onSave,
 }: DatePickerSheetProps) {
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
+  const monthLabels = t("months.short", { returnObjects: true }) as string[];
+  const weekdayLabels = t("weekdays.short", {
+    returnObjects: true,
+  }) as string[];
   const today = initialDate ?? new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -100,7 +90,7 @@ export function DatePickerSheet({
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.headerTitle}>Select date</Text>
+            <Text style={styles.headerTitle}>{t("datePicker.title")}</Text>
             <Pressable onPress={onClose} hitSlop={12}>
               <Ionicons name="close" size={22} color={colors.textSecondary} />
             </Pressable>
@@ -116,7 +106,7 @@ export function DatePickerSheet({
               />
             </Pressable>
             <Text style={styles.monthLabel}>
-              {MONTH_LABELS[viewMonth]} {viewYear}
+              {monthLabels[viewMonth]} {viewYear}
             </Text>
             <Pressable onPress={goToNextMonth} hitSlop={12}>
               <Ionicons
@@ -129,7 +119,7 @@ export function DatePickerSheet({
 
           {/* Weekday labels */}
           <View style={styles.weekRow}>
-            {WEEKDAY_LABELS.map((label, i) => (
+            {weekdayLabels.map((label, i) => (
               <Text key={i} style={styles.weekdayLabel}>
                 {label}
               </Text>
@@ -170,7 +160,7 @@ export function DatePickerSheet({
           </View>
 
           <Pressable style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonText}>Save Date</Text>
+            <Text style={styles.saveButtonText}>{t("datePicker.save")}</Text>
           </Pressable>
         </Pressable>
       </Pressable>

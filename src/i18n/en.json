@@ -19,6 +19,79 @@
     "settings": {
       "title": "Settings",
       "language": "Language"
+    },
+    "months": {
+      "short": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    },
+    "weekdays": {
+      "short": ["M", "T", "W", "T", "F", "S", "S"]
+    },
+    "addAlert": {
+      "title": "Create Alert",
+      "medicineInfo": "Medicine Info",
+      "medicineNamePlaceholder": "Enter medicine name",
+      "takePhoto": "Take a photo",
+      "uploadFromDevice": "or upload from device",
+      "imageHint": "JPG, JPEG, PNG less than 1MB",
+      "schedule": "Schedule",
+      "startDate": "Start date",
+      "frequency": "Frequency",
+      "selectDate": "Select date",
+      "selectFrequency": "Select frequency",
+      "dose": "Dose {{number}}",
+      "doseAmount": "Dose amount",
+      "time": "Time",
+      "selectDosage": "Select dosage",
+      "selectTime": "Select time",
+      "remove": "Remove",
+      "addAnotherDosage": "Add another dosage",
+      "beforeMeal": "Before Meal",
+      "afterMeal": "After Meal",
+      "createReminder": "Create Reminder",
+      "everyInterval": "Every {{interval}} {{unit}}",
+      "errors": {
+        "medicineNameRequired": "Medicine name is required",
+        "startDateRequired": "Start date is required",
+        "frequencyRequired": "Frequency is required",
+        "doseAmountRequired": "Dose amount is required",
+        "timeRequired": "Time is required"
+      }
+    },
+    "datePicker": {
+      "title": "Select date",
+      "save": "Save Date"
+    },
+    "timePicker": {
+      "title": "Select time",
+      "save": "Save Time"
+    },
+    "dosagePicker": {
+      "title": "Select dosage",
+      "save": "Save Dosage",
+      "drops": "Drops",
+      "pills": "Pills"
+    },
+    "frequencyPicker": {
+      "title": "Set frequency",
+      "every": "Every",
+      "save": "Save",
+      "hour_one": "Hour",
+      "hour_other": "Hours",
+      "day_one": "Day",
+      "day_other": "Days",
+      "week_one": "Week",
+      "week_other": "Weeks",
+      "month_one": "Month",
+      "month_other": "Months"
+    },
+    "uploadImage": {
+      "title": "Upload image",
+      "takePhoto": "Take a photo",
+      "uploadFromDevice": "Upload from device",
+      "cameraPermissionTitle": "Camera access needed",
+      "cameraPermissionBody": "Enable camera access in your device settings to take a photo of the medication.",
+      "photoPermissionTitle": "Photo access needed",
+      "photoPermissionBody": "Enable photo library access in your device settings to attach a picture of the medication."
     }
   }
 }
