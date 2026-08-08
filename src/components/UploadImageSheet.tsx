@@ -97,10 +97,7 @@ export function UploadImageSheet({
         />
 
         <View
-          style={[
-            styles.sheet,
-            { paddingBottom: spacing.xl + insets.bottom },
-          ]}
+          style={[styles.sheet, { paddingBottom: spacing.xl + insets.bottom }]}
         >
           <View style={styles.grabHandle} />
 
