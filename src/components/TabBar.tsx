@@ -15,14 +15,14 @@ const ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   index: "home-outline",
   "my-meds": "medkit-outline",
   reports: "pie-chart-outline",
-  profile: "person-outline",
+  settings: "settings-outline",
 };
 
 const ACTIVE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   index: "home",
   "my-meds": "medkit",
   reports: "pie-chart",
-  profile: "person",
+  settings: "settings",
 };
 
 function TabButton({

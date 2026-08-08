@@ -14,7 +14,11 @@
       "myMeds": "Dwa dyali",
       "addAlert": "Zid alert",
       "reports": "Rapports",
-      "profile": "Profil"
+      "settings": "I3dadat"
+    },
+    "settings": {
+      "title": "I3dadat",
+      "language": "Lougha"
     }
   }
 }

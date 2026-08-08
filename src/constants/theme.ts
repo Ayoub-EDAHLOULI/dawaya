@@ -1,6 +1,7 @@
 export const colors = {
   primary: "#0FB5AE", // teal accent (active tab, FAB)
   primaryDark: "#0B8F89",
+  primaryLight: "#E6F4FE",
   background: "#F3F4F6",
   surface: "#FFFFFF",
   border: "#E5E7EB",

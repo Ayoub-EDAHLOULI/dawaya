@@ -14,7 +14,11 @@
       "myMeds": "My Meds",
       "addAlert": "Add Alert",
       "reports": "Reports",
-      "profile": "Profile"
+      "settings": "Settings"
+    },
+    "settings": {
+      "title": "Settings",
+      "language": "Language"
     }
   }
 }
