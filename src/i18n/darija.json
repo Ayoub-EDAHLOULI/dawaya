@@ -8,6 +8,13 @@
       "taken": "Khditou",
       "skipped": "Makhditouch",
       "snooze": "Men be3d"
+    },
+    "nav": {
+      "home": "Rayes",
+      "myMeds": "Dwa dyali",
+      "addAlert": "Zid alert",
+      "reports": "Rapports",
+      "profile": "Profil"
     }
   }
 }

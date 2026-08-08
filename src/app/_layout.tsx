@@ -35,8 +35,8 @@ export default function RootLayout() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* We are removing the default tabs and replacing them with a single index screen */}
-      <Stack.Screen name="index" />
+      <Stack.Screen name="(tabs)" />
+      <Stack.Screen name="add-alert" options={{ presentation: "modal" }} />
     </Stack>
   );
 }

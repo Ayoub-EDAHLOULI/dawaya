@@ -8,6 +8,13 @@
       "taken": "Taken",
       "skipped": "Skipped",
       "snooze": "Snooze"
+    },
+    "nav": {
+      "home": "Home",
+      "myMeds": "My Meds",
+      "addAlert": "Add Alert",
+      "reports": "Reports",
+      "profile": "Profile"
     }
   }
 }

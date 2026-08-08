@@ -8,6 +8,13 @@
       "taken": "Pris",
       "skipped": "Ignoré",
       "snooze": "Plus tard"
+    },
+    "nav": {
+      "home": "Accueil",
+      "myMeds": "Mes médicaments",
+      "addAlert": "Ajouter",
+      "reports": "Rapports",
+      "profile": "Profil"
     }
   }
 }
